@@ -399,7 +399,7 @@ namespace
 
         return fs.almost_canonical(ret, KMPKG_LINE_INFO);
     }
-
+    
     // Guaranteed to return non-empty
     Path determine_root(const ReadOnlyFilesystem& fs, const Path& original_cwd, const KmpkgCmdArguments& args)
     {
@@ -442,6 +442,7 @@ namespace
             Checks::msg_exit_with_error(KMPKG_LINE_INFO, msgErrorMissingKmpkgRoot);
         }
 
+        kmpkg::set_registry_root(ret.c_str());
         return ret;
     }
 

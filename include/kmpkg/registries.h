@@ -6,9 +6,9 @@
 #include <kmpkg/base/fwd/optional.h>
 
 #include <kmpkg/fwd/configuration.h>
+#include <kmpkg/fwd/kmpkgpaths.h>
 #include <kmpkg/fwd/registries.h>
 #include <kmpkg/fwd/sourceparagraph.h>
-#include <kmpkg/fwd/kmpkgpaths.h>
 
 #include <kmpkg/base/path.h>
 #include <kmpkg/base/span.h>
@@ -23,15 +23,9 @@
 
 namespace kmpkg
 {
-    inline std::string get_builtin_registry_url() {
-    static std::string url = [] {
-        if (auto* env = std::getenv("KMPKG_REGISTRY_URL")) {
-            return std::string(env);
-        }
-        return std::string("https://github.com/kumose/kmpkg");
-    }();
-    return url;
-}
+    std::string get_builtin_registry_url();
+
+    void set_registry_root(const std::string &p);
 
     struct LockFile
     {

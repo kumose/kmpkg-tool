@@ -8,6 +8,7 @@
 #include <kmpkg/base/messages.h>
 #include <kmpkg/base/strings.h>
 #include <kmpkg/base/util.h>
+#include <kmpkg/base/path.h>
 
 #include <kmpkg/documentation.h>
 #include <kmpkg/metrics.h>
@@ -23,6 +24,7 @@
 #include <map>
 #include <string>
 #include <vector>
+#include <fstream>
 
 namespace
 {
@@ -1059,6 +1061,37 @@ namespace
 
 namespace kmpkg
 {
+    static std::string kGRoot;
+    void set_registry_root(const std::string &p) {
+        kGRoot = p;
+    }
+
+    std::string get_builtin_registry_url() {
+        if (!kGRoot.empty()) {
+            std::string p = kGRoot +"/registry.txt";
+             std::ifstream in(p);
+            if (in) {
+                std::string line;
+                while (std::getline(in, line)) {
+                    auto lv = Strings::trim(line);
+                    if (lv.empty()) {
+                        continue;
+                    }
+                    if (lv[0] == '#') {
+                        continue;
+                    }
+                    return lv.to_string();
+                }
+            }
+        }
+
+        if (auto* env = std::getenv("KMPKG_REGISTRY_URL")) {
+            return std::string(env);
+        }
+        return std::string("https://github.com/kumose/kmpkg");
+    }
+
+
     ExpectedL<LockFile::Entry> LockFile::get_or_fetch(const KmpkgPaths& paths, StringView repo, StringView reference)
     {
         auto range = lockdata.equal_range(repo);
